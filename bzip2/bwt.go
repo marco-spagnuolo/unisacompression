@@ -100,3 +100,50 @@ func (bwt *burrowsWheelerTransform) Decode(buf []byte, ptr int) {
 	}
 	copy(buf, buf2)
 }
+func (bwt *burrowsWheelerTransform) Encode1(buf []byte) (ptr int) {
+	if len(buf) == 0 {
+		return -1
+	}
+
+	// Create a list of rotations of the src slice
+	rotations := make([][]byte, len(buf))
+	for i := range buf {
+		rotation := make([]byte, len(buf))
+		copy(rotation[:i], buf[len(buf)-i:])
+		copy(rotation[i:], buf[:len(buf)-i])
+		rotations[i] = rotation
+	}
+
+	// Sort the rotations lexicographically
+	sort.Slice(rotations, func(i, j int) bool {
+		return bytes.Compare(rotations[i], rotations[j]) == -1
+	})
+
+	// Write the last characters of each rotation to the dst slice
+	bwt.perm = make([]uint32, len(buf))
+	for i, rotation := range rotations {
+		bwt.perm[i] = uint32(rotation[len(rotation)-1])
+		if bytes.Equal(rotation, buf) {
+			ptr = i
+		}
+	}
+
+	return ptr
+}
+
+func (bwt *burrowsWheelerTransform) Decode1(buf []byte, ptr int) {
+	// Compute the inverse permutation of the BWT
+	invPerm := make([]int, len(bwt.perm))
+	for i, p := range bwt.perm {
+		invPerm[p] = i
+	}
+
+	// Reconstruct the original string using the inverse permutation
+	for i, p := range invPerm {
+		if p == ptr {
+			buf[i] = 0
+		} else {
+			buf[i] = byte(bwt.perm[p])
+		}
+	}
+}
