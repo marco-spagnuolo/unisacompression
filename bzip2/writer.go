@@ -179,7 +179,7 @@ func (zw *Writer) encodeBlock(buf []byte) {
 	zw.crc.val = 0
 
 	// Step 1: Burrows-Wheeler transformation.
-	ptr := zw.bwt.Encode(buf)
+	ptr := zw.bwt.Encode1(buf)
 	zw.wr.WriteBitsBE64(uint64(ptr), 24)
 
 	// Step 2: Move-to-front transform and run-length encoding.
