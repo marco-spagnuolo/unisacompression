@@ -194,7 +194,7 @@ func (zr *Reader) decodeBlock() []byte {
 	if ptr >= len(buf) {
 		panicf(errors.Corrupted, "origin pointer (0x%06x) exceeds block size: %d", ptr, len(buf))
 	}
-	zr.bwt.Decode1(buf, ptr)
+	zr.bwt.Decode(buf, ptr)
 
 	return buf
 }
