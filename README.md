@@ -1,2 +1,2 @@
-# unisacompression 
-a golang library to compress and decompress file with bzip2 built for the data compression's exam of Salerno's University 
+# Unisacompression 
+A Go library for compressing and decompressing files using Bzip2. This library was created for the Data Compression exam at the University of Salerno.
